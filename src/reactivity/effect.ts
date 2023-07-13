@@ -1,3 +1,4 @@
+import { extend } from "../shared";
 class ReactiveEffect {
   private _fn: any;
   deps = [];
@@ -41,6 +42,8 @@ export function track(target, key) {
     dep = new Set();
     depsMap.set(key, dep);
   }
+
+  if (!activeEffect) return;
   dep.add(activeEffect);
   activeEffect.deps.push(dep);
 }
@@ -60,8 +63,11 @@ export function trigger(target, key) {
 let activeEffect;
 export function effect(fn, options: any = {}) {
   const _effect = new ReactiveEffect(fn, options.scheduler);
-  _effect.onStop = options.onStop;
-  
+//   _effect.onStop = options.onStop;
+// options
+//   Object.assign(_effect, options);
+
+  extend(_effect, options);
   _effect.run();
 
   const runner: any = _effect.run.bind(_effect);
