@@ -17,18 +17,18 @@ describe("effect", () => {
     expect(nextAge).toBe(12);
   });
 
-  it('should return runner when call effect', () => {
-    // effect(fn) -> function runner() -> fn -> return 
+  it("should return runner when call effect", () => {
+    // effect(fn) -> function runner() -> fn -> return
     let foo = 10;
     const runner = effect(() => {
       foo++;
-      return 'foo'
-    })
+      return "foo";
+    });
     expect(foo).toBe(11);
     const res = runner();
     expect(foo).toBe(12);
-    expect(res).toBe('foo');
-  })
+    expect(res).toBe("foo");
+  });
 
   it("scheduler", () => {
     // 1. 通过 effect 的第二个参数给定一个scheduler的fn
@@ -39,7 +39,7 @@ describe("effect", () => {
     let run: any;
     const scheduler = jest.fn(() => {
       run = runner;
-    })
+    });
     const obj = reactive({ foo: 1 });
     const runner = effect(
       () => {
@@ -58,21 +58,40 @@ describe("effect", () => {
     run();
     // should have run
     expect(dummy).toBe(2);
-  })
-});
-
-it("stop", () => {
-  let dummy;
-  const obj = reactive({ prop: 1 });
-  const runner = effect(() => {
-    dummy = obj.prop;
   });
-  obj.prop = 2;
-  expect(dummy).toBe(2);
-  stop(runner);
-  obj.prop = 3;
-  expect(dummy).toBe(2);
 
-  runner();
-  expect(dummy).toBe(3);
-})
+  it("stop", () => {
+    let dummy;
+    const obj = reactive({ prop: 1 });
+    const runner = effect(() => {
+      dummy = obj.prop;
+    });
+    obj.prop = 2;
+    expect(dummy).toBe(2);
+    stop(runner);
+    obj.prop = 3;
+    expect(dummy).toBe(2);
+
+    runner();
+    expect(dummy).toBe(3);
+  });
+
+  it("onStop", () => {
+    const obj = reactive({
+      foo: 1,
+    });
+    const onStop = jest.fn();
+    let dummy;
+    const runner = effect(
+      () => {
+        dummy = obj.foo;
+      },
+      {
+        onStop,
+      }
+    );
+
+    stop(runner);
+    expect(onStop).toBeCalledTimes(1);
+  });
+});
