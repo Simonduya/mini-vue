@@ -6,6 +6,7 @@ class RefImpl {
   private _value: any;
   private _rawValue: any;
   public dep;
+  public _v_is_Ref = true;
   constructor(value) {
     this._rawValue = value;
     //看看value是否为对象
@@ -45,4 +46,12 @@ function trackRefValue(ref) {
 
 function convert(value) {
   return  isObject(value) ? reactive(value) : value;
+}
+
+export function isRef(ref) {
+  return !!ref._v_is_Ref;
+}
+
+export function unRef(ref) {
+  return isRef(ref) ? ref.value : ref;
 }
