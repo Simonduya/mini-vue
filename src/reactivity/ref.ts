@@ -24,7 +24,6 @@ class RefImpl {
     //不能直接判断hasChanged(newValue, this._value)
     //因为value可能是一个proxy和一个普通对象进行比较
     if (hasChanged(newValue, this._rawValue)) {
-
       // this._value = newValue;
       this._rawValue = newValue;
       //看看value是否为对象
@@ -45,7 +44,7 @@ function trackRefValue(ref) {
 }
 
 function convert(value) {
-  return  isObject(value) ? reactive(value) : value;
+  return isObject(value) ? reactive(value) : value;
 }
 
 export function isRef(ref) {
@@ -54,4 +53,19 @@ export function isRef(ref) {
 
 export function unRef(ref) {
   return isRef(ref) ? ref.value : ref;
+}
+
+export function proxyRefs(objectWithRefs) {
+  return new Proxy(objectWithRefs, {
+    get(target, key) {
+      return unRef(Reflect.get(target, key));
+    },
+    set(target, key, newValue) {
+      if (isRef(target[key]) && !isRef(newValue)) {
+        return (target[key].value = newValue);
+      } else {
+        return Reflect.set(target, key, newValue);
+      }
+    },
+  });
 }
