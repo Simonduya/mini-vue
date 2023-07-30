@@ -65,7 +65,7 @@ describe("ref", () => {
       age: ref(10),
       name: "hx",
     };
-    // get逻辑
+    // get逻辑  
     const proxyUser = proxyRefs(user);
     expect(user.age.value).toBe(10);
     expect(proxyUser.age).toBe(10);
