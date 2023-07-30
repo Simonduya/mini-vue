@@ -85,7 +85,7 @@ export function stop(runner) {
   runner.effect.stop();
 }
 
-export function track(target, type, key) {
+export function track(target, key) {
   if (!isTracking()) {
     return;
   }
@@ -126,7 +126,7 @@ export function trackEffects(dep) {
   }
 }
 
-export function trigger(target, type, key) {
+export function trigger(target, key) {
   // 1. 先收集所有的 dep 放到 deps 里面，
   // 后面会统一处理
   let deps: Array<any> = [];

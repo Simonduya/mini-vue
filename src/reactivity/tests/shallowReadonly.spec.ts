@@ -8,7 +8,7 @@ describe("shallowReadonly", () => {
   });
   it("warn when call set", () => {
     // console.warn();
-    // mock
+    // mock 
     console.warn = jest.fn();
     
     const user = shallowReadonly({

@@ -40,7 +40,7 @@ function createSetter() {
     trigger(target, key);
     return res;
   };
-}
+} 
 
 export const mutableHandlers = {
   get,

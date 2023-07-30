@@ -32,8 +32,8 @@ describe("effect", () => {
 
   it("scheduler", () => {
     // 1. 通过 effect 的第二个参数给定一个scheduler的fn
-    // 2. effect第一次执行的时候还会执行fn
-    // 3. 当 响应式对象 set update 不会执行fn 而是执行 scheduler
+    // 2. effect第一次执行的时候还会执行fn, 而不会执行scheduler
+    // 3. 当 响应式对象执行set操作 update 时不会执行fn 而是执行 scheduler
     // 4. 如果说当执行runner的时候, 会再次执行fn
     let dummy;
     let run: any;
@@ -66,7 +66,10 @@ describe("effect", () => {
     const runner = effect(() => {
       dummy = obj.prop;
     });
-    obj.prop = 2;
+    // obj.prop = 2;
+    // obj.prop = obj.prop + 1;
+    // 同时触发get和set操作
+    obj.prop++
     expect(dummy).toBe(2);
     stop(runner);
     obj.prop = 3;
