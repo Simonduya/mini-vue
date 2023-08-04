@@ -26,6 +26,10 @@ function setupStatefulComponent(instance: any) {
         if (key in setupState) {
           return setupState[key];
         }        
+        if(key === '$el') {
+          debugger
+          return instance.vnode.el;
+        }
       },
     }
   );
