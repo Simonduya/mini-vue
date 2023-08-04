@@ -34,7 +34,7 @@ function mountElement(vnode, container) {
   if (typeof children === "string") {
     el.textContent = children;
   } else if (Array.isArray(children)) {
-   mountChildren(vnode, el);
+    mountChildren(vnode, el);
   }
 
   const { props } = vnode;
@@ -63,9 +63,10 @@ function mountComponent(vnode: any, container: any) {
 }
 
 function setupRenderEffect(instance: any, container) {
-  console.log(instance);
+  const { proxy } = instance;
+  console.log(proxy, 'proxy');
   
-  const subTree = instance.render();
+  const subTree = instance.render.call(proxy);
   //vnode->patch
   // vnode -> element -> mountElement
   patch(subTree, container);

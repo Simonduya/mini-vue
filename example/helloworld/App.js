@@ -8,23 +8,26 @@ export const App = {
         id: "root",
         class: ["red", "box"],
       },
-      // "hi " + this.msg
-      [
-        h(
-          "div",
-          {
-            class: "box2",
-          },
-          "hi div"
-        ),
-        h(
-          "p",
-          {
-            class: "ppp",
-          },
-          "mini"
-        ),
-      ]
+      // setupState
+      // this.$el
+      // 这里的this.msg是调用setup后return的对象中的msg
+      "hi " + this.msg
+      // [
+      //   h(
+      //     "div",
+      //     {
+      //       class: "box2",
+      //     },
+      //     "hi div"
+      //   ),
+      //   h(
+      //     "p",
+      //     {
+      //       class: "ppp",
+      //     },
+      //     "mini"
+      //   ),
+      // ]
     );
   },
   //
