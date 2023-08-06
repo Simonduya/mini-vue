@@ -1,6 +1,8 @@
 import { h } from "../../lib/mini-vue.esm.js";
+import { Foo } from "./Foo.js";
 window.self = null;
 export const App = {
+  name: "App",
   // ui
   render() {
     window.self = this;
@@ -11,28 +13,17 @@ export const App = {
         class: ["red", "box"],
         onClick: () => {
           alert(666);
-        }
+        },
       },
       // setupState
       // this.$el
       // 这里的this.msg是调用setup后return的对象中的msg
-      "hi " + this.msg
-      // [
-      //   h(
-      //     "div",
-      //     {
-      //       class: "box2",
-      //     },
-      //     "hi div"
-      //   ),
-      //   h(
-      //     "p",
-      //     {
-      //       class: "ppp",
-      //     },
-      //     "mini"
-      //   ),
-      // ]
+      [
+        h("div", {}, "hi, " + this.msg),
+        h(Foo, {
+          count: 1,
+        }),
+      ]
     );
   },
   //
