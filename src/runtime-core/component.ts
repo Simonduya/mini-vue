@@ -1,3 +1,5 @@
+import { PublicInstanceProxyHandlers } from "./companentPublicInstance";
+
 export function createComponentInstance(vnode) {
   const component = {
     vnode,
@@ -17,25 +19,10 @@ export function setupComponent(instance) {
 function setupStatefulComponent(instance: any) {
   const Component = instance.type;
 
-  instance.proxy = new Proxy(
-    {},
-    {
-      get(target, key) {
-        // 从setupState中获取值
-        const { setupState } = instance;        
-        if (key in setupState) {
-          return setupState[key];
-        }        
-        if(key === '$el') {
-          debugger
-          return instance.vnode.el;
-        }
-      },
-    }
-  );
+  instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
 
   const { setup } = Component;
-  
+
   if (setup) {
     // function object
     const setupResult = setup();
@@ -48,7 +35,7 @@ function handleSetupResult(instance, setupResult: any) {
   // function object
   // TODO funtion
   if (typeof setupResult === "object") {
-    instance.setupState = setupResult;    
+    instance.setupState = setupResult;
   }
 
   finishComponentSetup(instance);

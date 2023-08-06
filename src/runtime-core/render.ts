@@ -55,14 +55,14 @@ function mountChildren(vnode, container) {
   });
 }
 
-function mountComponent(vnode: any, container: any) {
-  const instance = createComponentInstance(vnode);
+function mountComponent(initialVNode: any, container: any) {
+  const instance = createComponentInstance(initialVNode);
   setupComponent(instance);
 
-  setupRenderEffect(instance, vnode, container);
+  setupRenderEffect(instance, initialVNode, container);
 }
 
-function setupRenderEffect(instance: any, vnode, container) {
+function setupRenderEffect(instance: any, initialVNode, container) {
   const { proxy } = instance;
   console.log(proxy, "proxy");
 
@@ -71,5 +71,5 @@ function setupRenderEffect(instance: any, vnode, container) {
   // vnode -> element -> mountElement
   patch(subTree, container);
 
-  vnode.el = subTree.el;
+  initialVNode.el = subTree.el;
 }
