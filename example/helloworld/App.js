@@ -9,6 +9,9 @@ export const App = {
       {
         id: "root",
         class: ["red", "box"],
+        onClick: () => {
+          alert(666);
+        }
       },
       // setupState
       // this.$el
