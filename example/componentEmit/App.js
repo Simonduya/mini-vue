@@ -6,10 +6,12 @@ export const App = {
     return h("div", {}, [
       h("div", {}, "App"),
       h(Foo, {
-        onAdd() {
-          console.log("onAdd");
+        onAdd(a, b) {
+          console.log("onAdd", a, b);
         },
-        color:'red'
+        onAddFoo(a, b) {
+          console.log("onAddFoo", a, b);
+        },
       }),
     ]);
   },
