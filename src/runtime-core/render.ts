@@ -1,7 +1,7 @@
 import { isObject } from "../shared/index";
 import { ShapeFlags } from "./ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
-import { Fragment } from "./vnode";
+import { Fragment, Text } from "./vnode";
 
 export function render(vnode, container) {
   // patch 方便递归处理
@@ -10,19 +10,14 @@ export function render(vnode, container) {
 }
 
 function patch(vnode, container) {
-  // debugger;
-  // 处理组件
-  // TODO 判断vnode是不是一个element
-  // 思考: 如何区分是element还是component类型
-  // element type: div
-  // component type: component
-  // processElement();
-  //   判断是不是element
   const { shapeFlag, type } = vnode;
   
   switch(type) {
     case Fragment:
       processFragment(vnode, container);
+      break;
+    case Text:
+      processText(vnode, container);
       break;
 
     default:
@@ -33,6 +28,13 @@ function patch(vnode, container) {
       }
       break;
   }
+}
+
+function processText(vnode: any, container: any) {
+  const { children } = vnode;
+  const textNode = (vnode.el = document.createTextNode(children));
+  container.append(textNode);
+
 }
 
 function processFragment(vnode: any, container: any) {
