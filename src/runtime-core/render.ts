@@ -34,7 +34,6 @@ function processText(vnode: any, container: any) {
   const { children } = vnode;
   const textNode = (vnode.el = document.createTextNode(children));
   container.append(textNode);
-
 }
 
 function processFragment(vnode: any, container: any) {
