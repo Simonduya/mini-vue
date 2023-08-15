@@ -1,5 +1,7 @@
 export const extend = Object.assign;
 
+export const EMPTY_OBJ = {}
+
 export const isObject = (target) => {
     return typeof target === 'object' && target !== null;
 }

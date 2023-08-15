@@ -3,18 +3,22 @@ function createElement(type) {
   return document.createElement(type);
 }
 
-function patchProp(el, key, val) {
+function patchProp(el, key, preVal, nextVal) {
   const isOn = (key: string) => /^on[A-Z]/.test(key);
   if (isOn(key)) {
     const event = key.slice(2).toLocaleLowerCase();
-    el.addEventListener(event, val);
+    el.addEventListener(event, nextVal);
   } else {
-    el.setAttribute(key, val);
+    if (nextVal === null || nextVal === undefined) {
+      el.removeAttribute(key);
+    } else {
+      el.setAttribute(key, nextVal);
+    }
   }
 }
 
-function insert(el, container) {    
-    container.append(el);
+function insert(el, container) {
+  container.append(el);
 }
 
 const renderer: any = createRenderer({
@@ -24,7 +28,7 @@ const renderer: any = createRenderer({
 });
 
 export function createApp(...args) {
-    return renderer.createApp(...args)
+  return renderer.createApp(...args);
 }
 
-export * from "../runtime-core"
+export * from "../runtime-core";
