@@ -4,7 +4,11 @@ import { createAppAPI } from "./createApp";
 import { Fragment, Text } from "./vnode";
 
 export function createRenderer(options) {
-  const { createElement, patchProp, insert } = options;
+  const {
+    createElement: hostCreateElement,
+    patchProp: hostPatchProp,
+    insert: hostInsert,
+  } = options;
 
   function render(vnode, container) {
     // patch 方便递归处理
@@ -48,7 +52,7 @@ export function createRenderer(options) {
   }
 
   function mountElement(vnode, container, parentComponent) {
-    const el = (vnode.el = createElement(vnode.type));
+    const el = (vnode.el = hostCreateElement(vnode.type));
     const { children, shapeFlag } = vnode;
     if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
       el.textContent = children;
@@ -60,10 +64,10 @@ export function createRenderer(options) {
     for (const key in props) {
       const val = props[key];
 
-      patchProp(el, key, val);
+      hostPatchProp(el, key, val);
     }
 
-    insert(el, container);
+    hostInsert(el, container);
   }
 
   function processComponent(vnode: any, container: any, parentComponent: any) {
@@ -99,6 +103,6 @@ export function createRenderer(options) {
     initialVNode.el = subTree.el;
   }
   return {
-    createApp:createAppAPI(render)
-  }
+    createApp: createAppAPI(render),
+  };
 }
