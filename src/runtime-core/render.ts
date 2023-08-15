@@ -10,6 +10,8 @@ export function createRenderer(options) {
     createElement: hostCreateElement,
     patchProp: hostPatchProp,
     insert: hostInsert,
+    remove: hostRemove,
+    setElementText: hostSetElementText,
   } = options;
 
   function render(vnode, container) {
@@ -67,7 +69,28 @@ export function createRenderer(options) {
     const newProps = n2.props || EMPTY_OBJ;
     // n2是没有el的, 所以需要重新赋值一下
     const el = (n2.el = n1.el);
+    patchChildren(n1, n2, el);
     patchProps(el, oldProps, newProps);
+  }
+
+  function patchChildren(n1, n2, container) {
+    const prevShapeFlag = n1.shapeFlag;
+    const { shapeFlag } = n2;
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+        // 1. 把old节点的children清空
+        unmountChildren(n1.children);
+        //  2.设置text
+        hostSetElementText(container, n2.children);
+      }
+    }
+  }
+
+  function unmountChildren(children) {
+    for (let i = 0; i < children.length; i++) {
+      const el = children[i].el;
+      hostRemove(el);
+    }
   }
 
   function patchProps(el, oldProps, newProps) {
