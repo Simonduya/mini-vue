@@ -76,12 +76,18 @@ export function createRenderer(options) {
   function patchChildren(n1, n2, container) {
     const prevShapeFlag = n1.shapeFlag;
     const { shapeFlag } = n2;
+    const c1 = n1.children;
+    const c2 = n2.children;
+
     if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
       if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
         // 1. 把old节点的children清空
-        unmountChildren(n1.children);
+        unmountChildren(c1);
         //  2.设置text
-        hostSetElementText(container, n2.children);
+        // hostSetElementText(container, c2);
+      }
+      if (c1 !== c2) {
+        hostSetElementText(container, c2);
       }
     }
   }

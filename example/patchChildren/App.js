@@ -9,10 +9,10 @@ export const App = {
   render() {
     return h("div", {}, [
       h("p", {}, "主页"),
-      h(ArrayToText),
+      // h(ArrayToText),
       // h(TextToArray),
       // h(ArrayToArray),
-      // h(TextToText),
+      h(TextToText),
     ]);
   },
 };
