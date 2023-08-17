@@ -104,20 +104,90 @@ import { h, ref } from "../../lib/mini-vue.esm.js";
 // a, b, (e, c), f, g
 // 中间部分， 老的比新的多， 那么多出来的直接就可以删除
 // C节点的props发生了变化
+// const prevChildren = [
+//   h("p", { key: "A" }, "A"),
+//   h("p", { key: "B" }, "B"),
+//   h("p", { key: "C", id: "c-prev" }, "C"),
+//   h("p", { key: "E" }, "E"),
+//   h("p", { key: "D" }, "D"),
+//   h("p", { key: "F" }, "F"),
+//   h("p", { key: "G" }, "G"),
+// ];
+// const nextChildren = [
+//   h("p", { key: "A" }, "A"),
+//   h("p", { key: "B" }, "B"),
+//   h("p", { key: "E" }, "E"),
+//   h("p", { key: "C", id: "c-next" }, "C"),
+//   h("p", { key: "F" }, "F"),
+//   h("p", { key: "G" }, "G"),
+// ];
+
+// 2 移动（新老都有的节点， 但是位置改变了）
+// 2.1
+// a, b, (c, d, e), f, g
+// a, b, (e, c, d), f, g  最长子序列 [1, 2]
+// const prevChildren = [
+//   h("p", { key: "A" }, "A"),
+//   h("p", { key: "B" }, "B"),
+//   h("p", { key: "C" }, "C"),
+//   h("p", { key: "D" }, "D"),
+//   h("p", { key: "E" }, "E"),
+//   h("p", { key: "F" }, "F"),
+//   h("p", { key: "G" }, "G"),
+// ];
+// const nextChildren = [
+//   h("p", { key: "A" }, "A"),
+//   h("p", { key: "B" }, "B"),
+//   h("p", { key: "E" }, "E"),
+//   h("p", { key: "C" }, "C"),
+//   h("p", { key: "D" }, "D"),
+//   h("p", { key: "F" }, "F"),
+//   h("p", { key: "G" }, "G"),
+// ];
+
+// 3 创建新的节点
+// a, b, (c, e), f, g
+// a, b, (e, c, d), f, g
+// d 节点在老的节点中不存在， 新的里面存在， 所以需要创建
+// const prevChildren = [
+//   h("p", { key: "A" }, "A"),
+//   h("p", { key: "B" }, "B"),
+//   h("p", { key: "C" }, "C"),
+//   h("p", { key: "E" }, "E"),
+//   h("p", { key: "F" }, "F"),
+//   h("p", { key: "G" }, "G"),
+// ];
+// const nextChildren = [
+//   h("p", { key: "A" }, "A"),
+//   h("p", { key: "B" }, "B"),
+//   h("p", { key: "E" }, "E"),
+//   h("p", { key: "C" }, "C"),
+//   h("p", { key: "D" }, "D"),
+//   h("p", { key: "F" }, "F"),
+//   h("p", { key: "G" }, "G"),
+// ];
+
+// 综合例子
+// a, b, (c, d, e, z), f, g
+// a, b, (d, c, y, e), f, g
+// d 节点在老的节点中不存在， 新的里面存在， 所以需要创建
 const prevChildren = [
   h("p", { key: "A" }, "A"),
   h("p", { key: "B" }, "B"),
-  h("p", { key: "C", id: "c-prev" }, "C"),
-  h("p", { key: "E" }, "E"),
+  h("p", { key: "C" }, "C"),
   h("p", { key: "D" }, "D"),
+  h("p", { key: "E" }, "E"),
+  h("p", { key: "Z" }, "Z"),
   h("p", { key: "F" }, "F"),
   h("p", { key: "G" }, "G"),
 ];
 const nextChildren = [
   h("p", { key: "A" }, "A"),
   h("p", { key: "B" }, "B"),
+  h("p", { key: "D" }, "D"),
+  h("p", { key: "C" }, "C"),
+  h("p", { key: "Y" }, "Y"),
   h("p", { key: "E" }, "E"),
-  h("p", { key: "C", id: "c-next" }, "C"),
   h("p", { key: "F" }, "F"),
   h("p", { key: "G" }, "G"),
 ];
