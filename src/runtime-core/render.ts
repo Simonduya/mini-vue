@@ -2,7 +2,9 @@ import { effect } from "../reactivity/effect";
 import { EMPTY_OBJ } from "../shared";
 import { ShapeFlags } from "./ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
+import { shouldUpdateComponent } from "./componentUpdateUtils";
 import { createAppAPI } from "./createApp";
+import { queueJobs } from "./scheduler";
 import { Fragment, Text } from "./vnode";
 
 export function createRenderer(options) {
@@ -292,7 +294,22 @@ export function createRenderer(options) {
     parentComponent: any,
     anchor
   ) {
-    mountComponent(n2, container, parentComponent, anchor);
+    if (!n1) {
+      mountComponent(n2, container, parentComponent, anchor);
+    } else {
+      updateComponent(n1, n2);
+    }
+  }
+
+  function updateComponent(n1, n2) {
+    const instance = (n2.component = n1.component);
+    if (shouldUpdateComponent(n1, n2)) {
+      instance.next = n2;
+      instance.update();
+    } else {
+      n2.el = n1.el;
+      instance.vnode = n2;
+    }
   }
 
   function mountChildren(children, container, parentComponent, anchor) {
@@ -307,42 +324,66 @@ export function createRenderer(options) {
     parentComponent: any,
     anchor
   ) {
-    const instance = createComponentInstance(initialVNode, parentComponent);
+    const instance = (initialVNode.component = createComponentInstance(
+      initialVNode,
+      parentComponent
+    ));
     setupComponent(instance);
 
     setupRenderEffect(instance, initialVNode, container, anchor);
   }
 
   function setupRenderEffect(instance: any, initialVNode, container, anchor) {
-    effect(() => {
-      if (!instance.isMounted) {
-        console.log("init");
+    instance.update = effect(
+      () => {
+        if (!instance.isMounted) {
+          console.log("init");
 
-        const { proxy } = instance;
-        // console.log(proxy, "proxy");
+          const { proxy } = instance;
+          // console.log(proxy, "proxy");
 
-        const subTree = (instance.subTree = instance.render.call(proxy));
-        //vnode->patch
-        // vnode -> element -> mountElement
-        patch(null, subTree, container, instance, anchor);
+          const subTree = (instance.subTree = instance.render.call(proxy));
+          //vnode->patch
+          // vnode -> element -> mountElement
+          patch(null, subTree, container, instance, anchor);
 
-        initialVNode.el = subTree.el;
-        instance.isMounted = true;
-      } else {
-        console.log("update");
-        const { proxy } = instance;
-        // console.log(proxy, "proxy");
+          initialVNode.el = subTree.el;
+          instance.isMounted = true;
+        } else {
+          console.log("update");
 
-        const subTree = instance.render.call(proxy);
-        const prevSubtree = instance.subTree;
-        instance.subTree = subTree;
-        patch(prevSubtree, subTree, container, instance, anchor);
+          const { next, vnode } = instance;
+          if (next) {
+            next.el = vnode.el;
+            updateComponentPreRender(instance, next);
+          }
+
+          const { proxy } = instance;
+          // console.log(proxy, "proxy");
+
+          const subTree = instance.render.call(proxy);
+          const prevSubtree = instance.subTree;
+          instance.subTree = subTree;
+          patch(prevSubtree, subTree, container, instance, anchor);
+        }
+      },
+      {
+        scheduler() {
+          queueJobs(instance.update)
+        },
       }
-    });
+    );
   }
   return {
-    createApp: createAppAPI(render),
+    createApp: createAppAPI(render), 
   };
+}
+
+function updateComponentPreRender(instance, nextVNode) {
+  instance.vnode = nextVNode;
+  instance.next = null;
+
+  instance.props = nextVNode.props;
 }
 
 function getSequence(arr) {
